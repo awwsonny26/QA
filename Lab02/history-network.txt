@@ -1,0 +1,36 @@
+mkdir qa2
+cd qa2
+ip netns list
+sudo ip netns add qa3514-a
+sudo ip netns add qa3514-b
+sudo ip -n qa3514-a link add a0 type veth peer name b0 netns qa3514-b
+sudo ip -n qa3514-a addr add 10.35.14.1/24 dev a0
+sudo ip -n qa3514-b addr add 10.35.14.2/24 dev b0
+sudo ip -n qa3514-a link set a0 up
+sudo ip -n qa3514-b link set b0 up
+sudo ip -n qa3514-a link set lo up
+sudo ip -n qa3514-b link set lo up
+sudo ip -n qa3514-a addr show dev a0
+sudo ip -n qa3514-b addr show dev b0
+sudo ip -n qa3514-a neigh show | tee neighbours-before.txt
+sudo ip netns exec qa3514-a ping -c 1 10.35.14.2
+sudo ip netns exec qa3514-a tcpdump -U -i a0 -w dynamic.pcap "arp or icmp" > dynamic.log 2>&1 &
+cat dynamic.log
+sudo ip -n qa3514-a neigh del 10.35.14.2 dev a0
+sudo ip netns exec qa3514-a ping -c 3 10.35.14.2 | tee dynamic-ping.txt
+sudo ip -n qa3514-a neigh show | tee dynamic-neigh.txt
+ps -eo user,pid,args | grep "[t]cpdump"
+sudo kill -INT 8116
+sudo chown awwsonny:awwsonny dynamic.pcap
+sudo ip -n qa3514-a neigh replace 10.35.14.2 lladdr 66:f1:55:38:b0:28 nud permanent dev a0
+sudo ip -n qa3514-a neigh show | tee static-neigh.txt
+sudo ip netns exec qa3514-a tcpdump -U -i a0 -w static.pcap "arp or icmp" > static.log 2>&1 &
+cat static.log
+sudo ip netns exec qa3514-a ping -c 3 10.35.14.2 | tee static-ping.txt
+ps -eo user,pid,args | grep "[t]cpdump"
+sudo kill -INT 8157
+sudo chown awwsonny:awwsonny static.pcap
+sudo ip -n qa3514-a neigh del 10.35.14.2 dev a0
+sudo ip -n qa3514-a neigh show | tee neighbours-after.txt
+wireshark dynamic.pcap > wireshark.log 2>&1 &
+history -w history-network.txt

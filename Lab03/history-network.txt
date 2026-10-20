@@ -1,0 +1,68 @@
+mkdir ~/qa3
+cd ~/qa3
+sudo ip -n qa3514-a -br addr
+sudo ip -n qa3514-b -br addr
+sudo ip -n qa3514-b route show
+sudo ip netns exec qa3514-b ping -c 3 10.35.14.1
+resolvectl dns enp0s3
+sudo apt-get install isc-dhcp-server isc-dhcp-client
+vi dhcpd.conf
+sudo install -m 755 client-script.sh /etc/dhcp/dhclient-script
+sudo install -m 644 dhcpd.conf /etc/dhcp/qa3514.conf
+sudo install -m 644 client.conf /etc/dhcp/qa3514-client.conf
+sudo touch /var/lib/dhcp/dhcpd.leases.qa3514-baseline
+sudo dhcpd -t -cf /etc/dhcp/qa3514.conf
+sudo ip netns exec qa3514-a dhcpd -4 -d -f -cf /etc/dhcp/qa3514.conf -lf /var/lib/dhcp/dhcpd.leases.qa3514-baseline -pf /run/dhcpd.pid a0 > server-baseline.log 2>&1 &
+cat server-baseline.log
+sudo ip netns exec qa3514-a tcpdump -U -i a0 -w baseline.pcap "udp port 67 or udp port 68 or arp" > capture-baseline.log 2>&1 &
+cat capture-baseline.log
+sudo ip -n qa3514-b addr del 10.35.14.2/24 dev b0
+sudo ip netns exec qa3514-b dhclient -4 -v -1 -cf /etc/dhcp/qa3514-client.conf -sf /etc/dhcp/dhclient-script -lf /run/dhclient-qa3514.lease -pf /run/dhclient-qa3514.pid b0 2>&1 | tee client-baseline.log
+sudo ip -n qa3514-b addr show dev b0
+sudo ip -n qa3514-b route show
+cat /run/qa3514-resolv.conf
+sudo cat /var/lib/dhcp/dhcpd.leases.qa3514-baseline
+ps -eo user,pid,args | grep -E "[t]cpdump|[d]hcpd|[d]hclient"
+sudo kill -INT 8763
+sudo ip netns exec qa3514-b dhclient -4 -v -r -sf /etc/dhcp/dhclient-script -lf /run/dhclient-qa3514.lease -pf /run/dhclient-qa3514.pid b0
+sudo kill -TERM 8759
+vi dhcpd.conf
+sudo install -m 644 dhcpd.conf /etc/dhcp/qa3514.conf
+cat dhcpd.conf
+sudo dhcpd -t -cf /etc/dhcp/qa3514.conf
+sudo touch /var/lib/dhcp/dhcpd.leases.qa3514-no-range
+sudo ip netns exec qa3514-a dhcpd -4 -d -f -cf /etc/dhcp/qa3514.conf -lf /var/lib/dhcp/dhcpd.leases.qa3514-no-range -pf /run/dhcpd.pid a0 > server-no-range.log 2>&1 &
+sudo ip netns exec qa3514-a tcpdump -U -i a0 -w no-range.pcap "udp port 67 or udp port 68 or arp" > capture-no-range.log 2>&1 &
+cat capture-no-range.log
+sudo ip netns exec qa3514-b dhclient -4 -v -1 -cf /etc/dhcp/qa3514-client.conf -sf /etc/dhcp/dhclient-script -lf /run/dhclient-qa3514-bad.lease -pf /run/dhclient-qa3514.pid b0 2>&1 | tee client-no-range.log
+sudo ip -n qa3514-b -4 addr show dev b0
+cat server-no-range.log
+ps -eo user,pid,args | grep -E "[t]cpdump|[d]hcpd|[d]hclient"
+sudo kill -TERM 8949
+sudo kill -INT 8943
+sudo kill -TERM 8940
+sudo install -m 644 dhcpd-baseline.conf /etc/dhcp/qa3514.conf
+sudo touch /var/lib/dhcp/dhcpd.leases.qa3514-recovery
+sudo ip netns exec qa3514-a dhcpd -4 -d -f -cf /etc/dhcp/qa3514.conf -lf /var/lib/dhcp/dhcpd.leases.qa3514-recovery -pf /run/dhcpd.pid a0 > server-recovery.log 2>&1 &
+sudo ip netns exec qa3514-a tcpdump -U -i a0 -w recovery.pcap "udp port 67 or udp port 68 or arp" > capture-recovery.log 2>&1 &
+cat server-recovery.log capture-recovery.log
+sudo ip netns exec qa3514-b dhclient -4 -v -1 -cf /etc/dhcp/qa3514-client.conf -sf /etc/dhcp/dhclient-script -lf /run/dhclient-qa3514-ok.lease -pf /run/dhclient-qa3514.pid b0 2>&1 | tee client-recovery.log
+sudo ip netns exec qa3514-b ping -c 3 10.35.14.1
+ps -eo user,pid,args | grep -E "[t]cpdump|[d]hcpd|[d]hclient"
+sudo kill -INT 9049
+sudo ip netns exec qa3514-b dhclient -4 -v -r -sf /etc/dhcp/dhclient-script -lf /run/dhclient-qa3514-ok.lease -pf /run/dhclient-qa3514.pid b0
+sudo kill -TERM 9046
+sudo timeout 10 tcpdump -U -i enp0s3 -c 2 -w dns.pcap "udp port 53014 and host 192.168.1.1" > dns.log 2>&1 &
+dig -b 192.168.1.30#53014 @192.168.1.1 example.com A +tries=1 +time=2
+sudo timeout 60 tcpdump -U -i enp0s3 -c 2 -w dns-query.pcap "udp port 53014 and host 192.168.1.1" > dns-query.log 2>&1 &
+dig -b 192.168.1.30#53014 @192.168.1.1 example.com A +tries=1 +time=2
+wireshark baseline.pcap -Y dhcp > wireshark.log 2>&1 &
+history -w history-network.txt
+sudo ip netns del qa3514-a
+sudo ip netns del qa3514-b
+sudo rm /etc/dhcp/dhclient-script /etc/dhcp/qa3514.conf /etc/dhcp/qa3514-client.conf
+history -w history-network.txt
+traceroute -n -m 3 -w 1 -q 1 192.168.1.1
+wireshark -i enp0s3 -f "udp port 53014 and host 192.168.1.1" -a packets:2 -w dns-wireshark.pcapng -k > capture-gui.log 2>&1 &
+dig -b 192.168.1.30#53014 @192.168.1.1 example.com A +tries=1 +time=2
+history -w history-network.txt

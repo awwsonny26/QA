@@ -1,0 +1,105 @@
+whoami
+sudo -v
+history 5
+uname -a
+sudo apt update
+cat /etc/apt/sources.list.d/ubuntu.sources
+sudo apt install -y vim
+cd
+mkdir -p downloads
+cd downloads
+man ls
+ls -la
+apt download hello
+dpkg -i hello_*.deb
+sudo dpkg -i hello_*.deb
+cd /
+sudo -s
+echo hi all
+echo "$PWD hi all here!"
+cd ~/downloads
+touch hi.sh
+echo $PATH
+vi hi.sh
+./hi.sh
+chmod a+x hi.sh
+chmod a+rwx hi.sh
+./hi.sh
+./hi.sh Ukraine
+mkdir scripts Documents
+cp hi.sh scripts/
+cp scripts Documents/
+cp -r scripts Documents/
+cd scripts
+mv hi.sh ..
+cd ..
+rm scripts
+rmdir scripts
+cd /bin
+ls -l
+cd ../..
+tar -cvf ~/downloads/scripts.tar -C ~/downloads/Documents scripts
+cat ~/downloads/hi.sh
+cat /var/log/dpkg.log
+tail -n 20 /var/log/dpkg.log
+less /var/log/dpkg.log
+cd /
+find . -xdev -name dhcp 2>/dev/null
+find . -xdev -iname "*dhcp*" 2>/dev/null
+find . -xdev -iname "*dhcp*" 2>/dev/null | grep --color=always -i dhcp
+find . -xdev -iname "*dhcp*" 2>/dev/null | grep --color=always -i etc
+ping -c 3 google.com
+cd ~/downloads
+ping google.com > ping.log 2>&1 &
+date >> ping.log
+sudo ping google.com > root-ping.log 2>&1 &
+pgrep -a -x vlc
+vlc > vlc.log 2>&1 &
+ls -l
+cd /bin
+ls
+echo $PATH
+set
+whoami
+cd /etc
+ls
+cd ..
+cd lib
+ls
+dmesg
+sudo dmesg
+ls /dev
+sudo dmesg > ~/downloads/kernel-before.log
+sudo dmesg -C
+lsusb
+df -h
+cd /home
+ls -l
+lsmod
+cd /proc
+cat cpuinfo
+echo 1 > /proc/sys/net/ipv4/ip_forward
+sudo echo 1 > /proc/sys/net/ipv4/ip_forward
+sudo -s
+ifconfig
+ifconfig -a
+cd
+echo vika > 1.txt
+cat 1.txt
+echo vasya > 2.txt
+cat 2.txt
+diff 1.txt 2.txt
+history
+lspci
+sudo apt install --only-upgrade -y dmidecode
+history -w history.txt
+whoami
+date
+ls -l history.txt
+history -w history.txt
+sudo dmesg | grep -i usb
+lsusb
+history -w history.txt
+whoami
+date
+history -w history.txt

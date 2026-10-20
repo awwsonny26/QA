@@ -1,0 +1,14 @@
+cd downloads
+history 5
+ping google.com > second-ping.log 2>&1 &
+fg
+bg
+ps aux | grep "[p]ing"
+kill -TERM 6944
+ps aux | grep "[p]ing"
+kill -TERM 6948
+sudo kill -KILL 6948
+ps -eo user,pid,lstart,args | grep "[v]lc"
+sudo killall vlc
+kill -TERM 7041
+history -w history2.txt

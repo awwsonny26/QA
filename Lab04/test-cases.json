@@ -1,0 +1,98 @@
+[
+  {
+    "id": "TC-01",
+    "title": "DHCP DORA",
+    "steps": "Start bound server; obtain lease; inspect ACK and route",
+    "expected": "DORA and .100/24, gateway .1, DNS 1.1.1.1",
+    "actual": "4 frames; exact expected options; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-02",
+    "title": "Local link and ARP",
+    "steps": "Flush own neighbor; ping gateway; inspect capture; ping client from router",
+    "expected": "ARP exchange and bidirectional connectivity",
+    "actual": "8 ARP/ICMP frames; both directions 3/3; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-03",
+    "title": "Router uplink",
+    "steps": "Inspect gateway; ping numeric IP and google.com from router",
+    "expected": "Independent Internet connectivity",
+    "actual": "1.1.1.1 3/3; google.com 3/3; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-04",
+    "title": "Client DNS and Internet",
+    "steps": "dig google.com A; ping google.com",
+    "expected": "NOERROR and replies",
+    "actual": "15ms DNS; 3/3 ICMP, 15.631ms average; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-05",
+    "title": "Address translation",
+    "steps": "Simultaneously capture LAN/uplink; compare ID, sequence, addresses and TTL",
+    "expected": "Matching packets, source translated, TTL decremented",
+    "actual": "14 frames each; ICMP 0x1b14 seq1-3; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-06",
+    "title": "Missing MASQUERADE",
+    "steps": "Remove only scoped rule; capture uplink; ping 1.1.1.1 and gateway",
+    "expected": "External failure with local connectivity retained",
+    "actual": "0/2 external,2/2 local; two untranslated requests; expected fault reproduced; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-07",
+    "title": "Repair",
+    "steps": "Restore scoped MASQUERADE; ping same numeric destination",
+    "expected": "Connectivity restored",
+    "actual": "3/3;15.331ms average; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  },
+  {
+    "id": "TC-08",
+    "title": "Persistence",
+    "steps": "Enable unit; reboot; inspect and ping before manual changes",
+    "expected": "Network/rules restored automatically",
+    "actual": "active, exit0,9.578478s boot time;3/3;15.036ms average; pass",
+    "preconditions": [
+      "Own client subnet10.35.14.0/24",
+      "Available enp0s3 uplink",
+      "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+# The format of this file is documented in the dhcpd.leases(5) manual page.
+# This lease file was written by isc-dhcp-4.4.3-P1
+
+# authoring-byte-order entry is generated, DO NOT DELETE
+authoring-byte-order little-endian;
+
+server-duid "\000\001\000\0012t\214\364\232\261\316\\\3150";
+
+lease 10.35.14.100 {
+  starts 3 2026/10/28 10:37:51;
+  ends 3 2026/10/28 10:47:51;
+  cltt 3 2026/10/28 10:37:51;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 3a:dc:7d:fe:9b:81;
+  client-hostname "Ubuntu24";
+}
+lease 10.35.14.100 {
+  starts 3 2026/10/28 10:42:15;
+  ends 3 2026/10/28 10:52:15;
+  cltt 3 2026/10/28 10:42:15;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 3a:dc:7d:fe:9b:81;
+  client-hostname "Ubuntu24";
+}
+lease 10.35.14.100 {
+  starts 3 2026/10/28 10:46:56;
+  ends 3 2026/10/28 10:56:56;
+  cltt 3 2026/10/28 10:46:56;
+  binding state active;
+  next binding state free;
+  rewind binding state free;
+  hardware ethernet 3a:dc:7d:fe:9b:81;
+  client-hostname "Ubuntu24";
+}

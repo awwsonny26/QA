@@ -1,0 +1,17 @@
+Internet Systems Consortium DHCP Client 4.4.3-P1
+Copyright 2004-2022 Internet Systems Consortium.
+All rights reserved.
+For info, please visit https://www.isc.org/software/dhcp/
+
+Listening on LPF/nv4-client0/3a:dc:7d:fe:9b:81
+Sending on   LPF/nv4-client0/3a:dc:7d:fe:9b:81
+Sending on   Socket/fallback
+xid: warning: no netdev with useable HWADDR found for seed's uniqueness enforcement
+xid: rand init seed (0x6a9ed105) built using gethostid
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 3 (xid=0x3281c518)
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 5 (xid=0x3281c518)
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 8 (xid=0x3281c518)
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 12 (xid=0x3281c518)
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 21 (xid=0x3281c518)
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 10 (xid=0x3281c518)
+DHCPDISCOVER on nv4-client0 to 255.255.255.255 port 67 interval 15 (xid=0x3281c518)

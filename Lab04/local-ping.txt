@@ -1,0 +1,8 @@
+PING 10.35.14.1 (10.35.14.1) 56(84) bytes of data.
+64 bytes from 10.35.14.1: icmp_seq=1 ttl=64 time=0.518 ms
+64 bytes from 10.35.14.1: icmp_seq=2 ttl=64 time=0.153 ms
+64 bytes from 10.35.14.1: icmp_seq=3 ttl=64 time=0.097 ms
+
+--- 10.35.14.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2028ms
+rtt min/avg/max/mdev = 0.097/0.256/0.518/0.186 ms

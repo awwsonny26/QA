@@ -1,0 +1,69 @@
+cd nv4
+whoami | tee identity.txt
+hostname | tee host.txt
+ip -br address show enp0s3 | tee uplink.txt
+ip route show default | tee gateway.txt
+resolvectl dns enp0s3 | tee host-dns.txt
+sudo iptables -t nat -S > nat-before.rules
+sudo install -m 755 restore-nv4.sh /usr/local/sbin/restore-nv4.sh
+sudo install -m 644 nv4-network.service /etc/systemd/system/nv4-network.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now nv4-network.service
+sudo iptables -t nat -S POSTROUTING | tee nat-config.txt
+sudo sysctl net.ipv4.ip_forward | tee forwarding.txt
+sudo ip -n nv4-client -br address | tee client-address-initial.txt
+sudo ip -n nv4-client route | tee client-route-initial.txt
+sudo install -m 644 dhcpd-nv4.conf /etc/dhcp/nv4.conf
+sudo install -m 755 dhclient-nv4.sh /etc/dhcp/dhclient-script
+sudo touch /var/lib/dhcp/dhcpd.nv4.leases /var/lib/dhcp/dhclient.nv4.leases
+sudo dhcpd -4 -f -d -cf /etc/dhcp/nv4.conf -lf /var/lib/dhcp/dhcpd.nv4.leases -pf /run/dhcpd-nv4.pid nv4-lan > dhcp-server.log 2>&1 &
+sudo ip -n nv4-client address flush dev nv4-client0 scope global
+sudo timeout -s INT 25s tcpdump -U -i nv4-lan -w dhcp.pcap udp port 67 or port 68 > dhcp-capture.log 2>&1 &
+sudo ip netns exec nv4-client dhclient -4 -1 -v -sf /etc/dhcp/dhclient-script -lf /var/lib/dhcp/dhclient.nv4.leases -pf /run/dhclient-nv4.pid nv4-client0 > dhcp-client.log 2>&1
+mv dhcp-server.log dhcp-server-initial.log
+mv dhcp-client.log dhcp-client-initial.log
+mv dhcp.pcap dhcp-initial.pcap
+mv dhcp-capture.log dhcp-capture-initial.log
+sudo touch /var/lib/dhcp/dhcpd.leases.nv4
+sudo dhcpd -4 -f -d -cf /etc/dhcp/nv4.conf -lf /var/lib/dhcp/dhcpd.leases.nv4 -pf /run/dhcpd.pid nv4-lan > dhcp-server.log 2>&1 &
+sudo timeout -s INT 25s tcpdump -U -i nv4-lan -w dhcp.pcap udp port 67 or port 68 > dhcp-capture.log 2>&1 &
+sudo ip netns exec nv4-client dhclient -4 -1 -v -sf /etc/dhcp/dhclient-script -lf /var/lib/dhcp/dhclient.nv4.leases -pf /run/dhclient-nv4.pid nv4-client0 > dhcp-client.log 2>&1
+sudo mkdir -p /etc/netns/nv4-client
+sudo cp /run/nv4-resolv.conf /etc/netns/nv4-client/resolv.conf
+sudo ip -n nv4-client -br address | tee client-address.txt
+sudo ip -n nv4-client route | tee client-route.txt
+cat /run/nv4-resolv.conf | tee client-dns.txt
+sudo ip netns exec nv4-client ping -c 3 -W 2 10.35.14.1 | tee local-ping.txt
+ping -c 3 -W 2 1.1.1.1 | tee router-internet.txt
+sudo timeout -s INT 30s tcpdump -U -i nv4-lan -w nat-inside.pcap icmp or port 53 > inside-capture.log 2>&1 &
+sudo timeout -s INT 30s tcpdump -U -i enp0s3 -w nat-outside.pcap icmp or host 1.1.1.1 > outside-capture.log 2>&1 &
+sudo ip netns exec nv4-client dig google.com A +tries=1 +time=3 | tee dns.txt
+sudo ip netns exec nv4-client ping -c 3 -W 2 google.com | tee client-internet.txt
+sudo timeout -s INT 10s tcpdump -U -i nv4-lan -w local-arp.pcap arp or icmp > local-capture.log 2>&1 &
+sudo ip -n nv4-client neigh flush dev nv4-client0
+sudo ip netns exec nv4-client ping -c 3 -W 1 10.35.14.1 | tee local-arp-ping.txt
+sudo iptables -t nat -D POSTROUTING -s 10.35.14.0/24 -o enp0s3 -j MASQUERADE
+sudo iptables -t nat -S POSTROUTING > fault-nat.txt
+sudo timeout -s INT 12s tcpdump -U -i enp0s3 -w no-nat.pcap icmp and host 1.1.1.1 > no-nat-capture.log 2>&1 &
+sudo ip netns exec nv4-client ping -c 2 -W 2 1.1.1.1 | tee fault-internet.txt
+sudo ip netns exec nv4-client ping -c 2 -W 1 10.35.14.1 | tee fault-local.txt
+sudo iptables -t nat -A POSTROUTING -s 10.35.14.0/24 -o enp0s3 -j MASQUERADE
+sudo ip netns exec nv4-client ping -c 3 -W 2 1.1.1.1 | tee restored-internet.txt
+sudo iptables -t nat -nvL POSTROUTING | tee nat-counters.txt
+sudo cat /var/lib/dhcp/dhcpd.leases.nv4 > server.leases
+sudo cat /var/lib/dhcp/dhclient.nv4.leases > client.leases
+sudo kill -TERM $(cat /run/dhclient-nv4.pid)
+sudo kill -TERM 6703
+systemctl show nv4-network.service -p ActiveState -p SubState -p UnitFileState | tee service-before-reboot.txt
+history -w history.txt
+history -w; sudo reboot
+cd nv4
+systemctl is-enabled nv4-network.service; systemctl show nv4-network.service -p ActiveState -p ExecMainStatus -p ActiveEnterTimestampMonotonic
+sudo sysctl net.ipv4.ip_forward; sudo ip -n nv4-client -4 route; sudo iptables -t nat -S POSTROUTING | tee nat-after-reboot.txt
+sudo ip netns exec nv4-client ping -c 3 -W 2 1.1.1.1 | tee after-reboot-ping.txt
+sudo iptables-save > iptables-after-reboot.rules
+sudo iptables -L -n -v > filter-after-reboot.txt
+ping -c 3 -W 2 10.35.14.100 | tee router-to-client.txt
+ping -c 3 -W 2 google.com | tee router-google.txt
+sudo rm /etc/dhcp/dhclient-script /etc/dhcp/nv4.conf
+history -w history-after-reboot.txt

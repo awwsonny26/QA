@@ -1,0 +1,11 @@
+{
+  "id": "TP-NV4",
+  "scope": "Outbound IPv4 NAT and fault isolation on VM-router/client link",
+  "preconditions": [
+    "Own client subnet10.35.14.0/24",
+    "Available enp0s3 uplink",
+    "Administrative rights and iproute2/iptables/ISC DHCP/tcpdump/Wireshark"
+  ],
+  "acceptance": "Expected DHCP parameters, bidirectional local reachability, DNS and ICMP, matched NAT packets, fault reproduction/repair, genuine reboot persistence",
+  "limitations": "Short ICMP/DNS checks only; no throughput/load or public inbound validation; reboot restores static client IP, not DHCP daemon."
+}

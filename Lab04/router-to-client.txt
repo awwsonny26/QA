@@ -1,0 +1,8 @@
+PING 10.35.14.100 (10.35.14.100) 56(84) bytes of data.
+64 bytes from 10.35.14.100: icmp_seq=1 ttl=64 time=0.048 ms
+64 bytes from 10.35.14.100: icmp_seq=2 ttl=64 time=0.040 ms
+64 bytes from 10.35.14.100: icmp_seq=3 ttl=64 time=0.039 ms
+
+--- 10.35.14.100 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2087ms
+rtt min/avg/max/mdev = 0.039/0.042/0.048/0.004 ms

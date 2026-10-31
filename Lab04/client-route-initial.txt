@@ -1,0 +1,2 @@
+default via 10.35.14.1 dev nv4-client0 
+10.35.14.0/24 dev nv4-client0 proto kernel scope link src 10.35.14.100 

@@ -1,0 +1,42 @@
+lease {
+  interface "nv4-client0";
+  fixed-address 10.35.14.100;
+  option subnet-mask 255.255.255.0;
+  option routers 10.35.14.1;
+  option dhcp-lease-time 600;
+  option dhcp-message-type 5;
+  option domain-name-servers 1.1.1.1;
+  option dhcp-server-identifier 10.35.14.1;
+  option broadcast-address 10.35.14.255;
+  renew 3 2026/10/28 10:42:14;
+  rebind 3 2026/10/28 10:46:36;
+  expire 3 2026/10/28 10:47:51;
+}
+lease {
+  interface "nv4-client0";
+  fixed-address 10.35.14.100;
+  option subnet-mask 255.255.255.0;
+  option routers 10.35.14.1;
+  option dhcp-lease-time 600;
+  option dhcp-message-type 5;
+  option domain-name-servers 1.1.1.1;
+  option dhcp-server-identifier 10.35.14.1;
+  option broadcast-address 10.35.14.255;
+  renew 3 2026/10/28 10:46:56;
+  rebind 3 2026/10/28 10:51:00;
+  expire 3 2026/10/28 10:52:15;
+}
+lease {
+  interface "nv4-client0";
+  fixed-address 10.35.14.100;
+  option subnet-mask 255.255.255.0;
+  option routers 10.35.14.1;
+  option dhcp-lease-time 600;
+  option dhcp-message-type 5;
+  option domain-name-servers 1.1.1.1;
+  option dhcp-server-identifier 10.35.14.1;
+  option broadcast-address 10.35.14.255;
+  renew 3 2026/10/28 10:51:56;
+  rebind 3 2026/10/28 10:55:41;
+  expire 3 2026/10/28 10:56:56;
+}

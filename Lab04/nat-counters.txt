@@ -1,0 +1,5 @@
+Chain POSTROUTING (policy ACCEPT 250 packets, 26231 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 MASQUERADE  0    --  *      !docker0  172.17.0.0/16        0.0.0.0/0           
+    0     0 MASQUERADE  0    --  *      enp0s3  172.30.35.2          0.0.0.0/0           
+    1    84 MASQUERADE  0    --  *      enp0s3  10.35.14.0/24        0.0.0.0/0           

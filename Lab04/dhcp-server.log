@@ -1,0 +1,20 @@
+Internet Systems Consortium DHCP Server 4.4.3-P1
+Copyright 2004-2022 Internet Systems Consortium.
+All rights reserved.
+For info, please visit https://www.isc.org/software/dhcp/
+Config file: /etc/dhcp/nv4.conf
+Database file: /var/lib/dhcp/dhcpd.leases.nv4
+PID file: /run/dhcpd.pid
+Wrote 0 leases to leases file.
+Listening on LPF/nv4-lan/9a:b1:ce:5c:cd:30/10.35.14.0/24
+Sending on   LPF/nv4-lan/9a:b1:ce:5c:cd:30/10.35.14.0/24
+Sending on   Socket/fallback/fallback-net
+Server starting service.
+DHCPDISCOVER from 3a:dc:7d:fe:9b:81 via nv4-lan
+DHCPOFFER on 10.35.14.100 to 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan
+DHCPREQUEST for 10.35.14.100 (10.35.14.1) from 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan
+DHCPACK on 10.35.14.100 to 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan
+DHCPREQUEST for 10.35.14.100 from 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan
+DHCPACK on 10.35.14.100 to 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan
+DHCPREQUEST for 10.35.14.100 from 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan
+DHCPACK on 10.35.14.100 to 3a:dc:7d:fe:9b:81 (Ubuntu24) via nv4-lan

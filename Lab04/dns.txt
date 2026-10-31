@@ -1,0 +1,25 @@
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.8-Ubuntu <<>> google.com A +tries=1 +time=3
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 35985
+;; flags: qr rd ra; QUERY: 1, ANSWER: 6, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;google.com.			IN	A
+
+;; ANSWER SECTION:
+google.com.		13	IN	A	142.250.120.139
+google.com.		13	IN	A	142.250.120.101
+google.com.		13	IN	A	142.250.120.113
+google.com.		13	IN	A	142.250.120.138
+google.com.		13	IN	A	142.250.120.102
+google.com.		13	IN	A	142.250.120.100
+
+;; Query time: 15 msec
+;; SERVER: 1.1.1.1#53(1.1.1.1) (UDP)
+;; WHEN: Wed Oct 28 10:40:28 UTC 2026
+;; MSG SIZE  rcvd: 135
+

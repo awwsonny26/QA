@@ -1,0 +1,24 @@
+{
+  "id": "DR-NV4-01",
+  "title": "No Internet replies after removal of scoped MASQUERADE",
+  "severity": "High for external client access",
+  "precondition": "Correct route, forwarding, FORWARD and working baseline",
+  "steps": [
+    "Delete only -s10.35.14.0/24 -o enp0s3 MASQUERADE",
+    "Capture enp0s3 ICMP to1.1.1.1",
+    "Client ping2 packets to1.1.1.1 and gateway"
+  ],
+  "expected": "Correct NAT configuration translates source and returns replies",
+  "actual": "0/2 external;2/2 local;two enp0s3 Echo Requests retain10.35.14.100 source",
+  "cause": "Deliberately removed own MASQUERADE; forwarding still works",
+  "fix": "Restore same scoped rule",
+  "retest": "3/3 external,15.331ms average; after reboot3/3,15.036ms",
+  "status": "Fixed and retested",
+  "evidence": [
+    "no-nat.pcap",
+    "fault-internet.txt",
+    "fault-local.txt",
+    "restored-internet.txt",
+    "after-reboot-ping.txt"
+  ]
+}

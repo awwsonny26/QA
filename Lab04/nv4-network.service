@@ -1,0 +1,12 @@
+[Unit]
+Description=Restore NV4 client link and scoped IPv4 NAT
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/restore-nv4.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
